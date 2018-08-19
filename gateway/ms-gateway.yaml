@@ -1,0 +1,34 @@
+#-------------------- istio gateway -------------------#
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-t1-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80 
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*.t1.aws.s12n.tk"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-t1-vs
+spec:
+  hosts:
+  - "hello.t1.aws.s12n.tk"
+  gateways:
+  - istio-t1-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 80 
+        host: hello.hello-t1.svc.cluster.local

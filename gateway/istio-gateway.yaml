@@ -1,0 +1,129 @@
+#-------------------- istio gateway -------------------#
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-istio-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*.istio.aws.s12n.tk"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-grafana-vs
+spec:
+  hosts:
+  - "grafana.istio.aws.s12n.tk"
+  gateways:
+  - istio-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 3000
+        host: grafana.istio-system.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-jaeger-query-vs
+spec:
+  hosts:
+  - "jaeger-query.istio.aws.s12n.tk"
+  gateways:
+  - istio-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 16686 
+        host: jaeger-query.istio-system.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-prometheus-vs
+spec:
+  hosts:
+  - "prometheus.istio.aws.s12n.tk"
+  gateways:
+  - istio-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 9090 
+        host: prometheus.istio-system.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-istio-vs
+spec:
+  hosts:
+  - "servicegraph.istio.aws.s12n.tk"
+  gateways:
+  - istio-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 8088 
+        host: servicegraph.istio-system.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-tracing-vs
+spec:
+  hosts:
+  - "tracing.istio.aws.s12n.tk"
+  gateways:
+  - istio-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 80 
+        host: tracing.istio-system.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-zipkin-vs
+spec:
+  hosts:
+  - "zipkin.istio.aws.s12n.tk"
+  gateways:
+  - istio-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 9411 
+        host: zipkin.istio-system.svc.cluster.local
