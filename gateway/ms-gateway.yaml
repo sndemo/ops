@@ -32,3 +32,38 @@ spec:
         port:
           number: 80 
         host: hello.hello-t1.svc.cluster.local
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-t2-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*.t2.aws.s12n.tk"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-t2-vs
+spec:
+  hosts:
+  - "hello.t2.aws.s12n.tk"
+  gateways:
+  - istio-t2-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 80
+        host: hello.hello-t2.svc.cluster.local

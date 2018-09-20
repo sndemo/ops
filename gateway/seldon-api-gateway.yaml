@@ -1,0 +1,34 @@
+#-------------------- istio gateway -------------------#
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-seldon-api-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80 
+      name: http
+      protocol: HTTP
+    hosts:
+    - "seldonapi.aws.s12n.tk"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-seldon-api-vs
+spec:
+  hosts:
+  - "seldonapi.aws.s12n.tk"
+  gateways:
+  - istio-seldon-api-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        port:
+          number: 8080 
+        host: seldon-core-seldon-apiserver.default.svc.cluster.local

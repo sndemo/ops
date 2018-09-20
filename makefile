@@ -14,6 +14,11 @@
 .delete-argocd-gateway:
 	kubectl delete -f gateway/argocd-gateway.yaml
 
+.install-seldon-api-gateway:
+	kubectl apply -f gateway/seldon-api-gateway.yaml
+.delete-seldon-api-gateway:
+	kubectl delete -f gateway/seldon-api-gateway.yaml
+
 .install-k8s-gateway:
 	kubectl apply -f gateway/k8s-gateway.yaml
 	kubectl create serviceaccount demo-dashboard-sa
@@ -32,6 +37,6 @@
 .delete-istio-gateway:
 	kubectl delete -f gateway/istio-gateway.yaml
 
-.install-all-gateways: .install-secret .install-ms-gateway .install-k8s-gateway .install-istio-gateway
+.install-all-gateways: .install-secret .install-ms-gateway .install-k8s-gateway .install-istio-gateway .install-seldon-api-gateway
 
-.delete-all-gateways: .delete-ms-gateway .delete-k8s-gateway .delete-istio-gateway .delete-secret 
+.delete-all-gateways: .delete-ms-gateway .delete-k8s-gateway .delete-istio-gateway .delete-secret .delete-seldon-api-gateway
