@@ -1,0 +1,70 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ms-vs-others
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ms-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/hello/v1/"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        host: hello.default.svc.cluster.local
+        subset: v1
+  - match:
+    - uri:
+        prefix: "/hello/v2/"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        host: hello.default.svc.cluster.local
+        subset: v2
+  - match:
+    - uri:
+        prefix: "/hello/"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 80
+        host: hello.default.svc.cluster.local
+    
+  - match:
+    - uri:
+        prefix: "/nginx"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 80
+        host: nginx.default.svc.cluster.local
+  - match:
+    - uri:
+        prefix: "/hellosample"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 80
+        host: hellosample.default.svc.cluster.local
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+      - "*"
+    route:
+    - destination:
+        port:
+          number: 443
+        host: argocd-server.argocd.svc.cluster.local
